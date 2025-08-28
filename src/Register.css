@@ -1,0 +1,181 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 90vh;  /* tetap bisa scroll kalau isi panjang */
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh; /* lebih fleksibel daripada height: 100% */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  align-items: center;
+}
+
+/* Card */
+.register-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  max-width: 380px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Animasi */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Title & Subtitle */
+.register-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.4rem;
+  color: #1e293b;
+}
+
+.register-subtitle {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #374151;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  background: #f9fafb;
+  transition: 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Tombol daftar */
+.register-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 0.5rem;
+}
+
+.register-button:hover {
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+}
+
+/* Footer link */
+.register-footer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.register-footer a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Role Button Group */
+.role-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* bagi dua rata */
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  justify-items: center; /* biar tombolnya center */
+}
+
+/* Sembunyikan radio asli */
+.role-options input[type="radio"] {
+  display: none;
+}
+
+/* Style label seperti tombol */
+.role-options label {
+  width: 100%; /* biar isi penuh kolom */
+  text-align: center;
+  padding: 10px 18px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #007bff;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effect */
+.role-options label:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Kalau checked -> aktif */
+.role-options input[type="radio"]:checked + label {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Responsif */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1.2rem;
+    border-radius: 0.8rem;
+  }
+  .register-title {
+    font-size: 1.3rem;
+  }
+  .register-subtitle {
+    font-size: 0.8rem;
+  }
+}
