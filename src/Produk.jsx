@@ -7,19 +7,21 @@ const Product = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
     amount: "",
   });
-  const [editProduct, setEditProduct] = useState(null); // menyimpan product yang sedang diedit
+  const [editProduct, setEditProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteProductId, setDeleteProductId] = useState(null);
   const handleAddProduct = async () => {
   const token = localStorage.getItem("token");
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://127.0.0.1:8000/api/products",
         {
           name: newProduct.name,
@@ -29,19 +31,18 @@ const Product = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      setProducts(prev => [...prev, res.data.data]);
+
       setMessage("Produk berhasil ditambahkan!");
       setMessageType("success");
       setShowModal(false);
       setNewProduct({ name: "", price: "", amount: "" });
 
-      // Pesan hilang otomatis setelah 3 detik
       setTimeout(() => setMessage(""), 3000);
     } catch (err) {
       console.error(err);
       setMessage("Gagal menambahkan produk!");
       setMessageType("error");
-
-      // Pesan hilang otomatis setelah 3 detik
       setTimeout(() => setMessage(""), 3000);
     }
   };
@@ -58,7 +59,6 @@ const Product = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update state products agar tabel langsung berubah
       setProducts(prevProducts =>
         prevProducts.map(p =>
           p.id === editProduct.id ? { ...p, ...editProduct } : p
@@ -102,7 +102,6 @@ const Product = () => {
     setShowDeleteModal(true);
   };
 
-  // Fungsi untuk konfirmasi hapus
   const handleConfirmDelete = () => {
     if (deleteProductId) {
       handleDeleteProduct(deleteProductId);
@@ -115,7 +114,7 @@ const Product = () => {
       // cek token
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/login"); // redirect kalau tidak ada token
+        navigate("/login");
       } else {
         // fetch data user pakai token
         axios
@@ -125,7 +124,7 @@ const Product = () => {
             },
           })
           .then((res) => {
-            setUser(res.data); // asumsi API balikin { id, name, email, ... }
+            setUser(res.data);
           })
           .catch(() => {
             localStorage.removeItem("token");
@@ -144,7 +143,7 @@ const Product = () => {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
-        setProducts(res.data); // set data produk ke state
+        setProducts(res.data);
       })
       .catch(err => {
         console.error(err);
@@ -155,84 +154,36 @@ const Product = () => {
     }, [navigate]);
 
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("success"); // 'success' atau 'error'
+  const [messageType, setMessageType] = useState("success");
 
-  const [products, setProducts] = useState([]); // sebelumnya hardcode
+  const [products, setProducts] = useState([]);
 
   return (
     <div className="product-container">
-      {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <div className="sidebar-header">MANPRO</div>
-        <nav className="sidebar-menu">
-            <a href="/Dashboard">
-                {/* Icon Dashboard */}
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="icon"
-                style={{ marginRight: "10px" }}
-                >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                <path d="M10 12h4v4h-4z" />
-                </svg>
-                Dashboard
-            </a>
-            <a href="/Produk">
-                {/* Icon Produk */}
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="icon"
-                style={{ marginRight: "10px" }}
-                >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                <path d="M17 17h-11v-14h-2" />
-                <path d="M6 5l14 1l-1 7h-13" />
-                </svg>
-                Produk
-            </a>
-          </nav>
-        <div className="sidebar-footer">
-          <button
-            className="logout-btn"
-            onClick={() => navigate("/login")}
-          >
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Overlay saat mobile */}
-      {sidebarOpen && <div className="overlay" onClick={() => setSidebarOpen(false)} />}
-
-      {/* Main Content */}
       <div className="main-content">
-        <header className="header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h1>Produk</h1>
+        <header className="navbar">
+        <div className="navbar-left">
+          <div className="logo" onClick={() => navigate("/Dashboard")}>
+            MANPRO
+          </div>
 
-          {/* Profile */}
+          <div className="hamburger" onClick={toggleMenu}>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+          </div>
+
+          <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
+            <a href="/Dashboard">Dashboard</a>
+            {user?.role === "manager" && <a href="/Produk">Produk</a>}
+          </nav>
+        </div>
+
+        <div className="navbar-right">
           <div
-            style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}
+            className="profile-icon"
             onClick={() => navigate("/profile")}
+            style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -245,20 +196,18 @@ const Product = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
-              <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>
-              <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855"/>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+              <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
             </svg>
-            <span style={{ fontWeight: "bold" }}>
-              {user ? user.name : "Loading..."}
-            </span>
+            <span className="user-name">{user?.name || "Loading..."}</span>
           </div>
-        </header>
+        </div>
+      </header>
 
         <main className="content">
           <div className="card">
-            {/* Tombol Tambah Produk */}
             <div style={{ width: "100%", marginBottom: "15px", textAlign: "left" }}>
               <button
                 style={{
@@ -274,7 +223,6 @@ const Product = () => {
                 }}
                 onClick={() => setShowModal(true)}
               >
-                {/* Icon Plus */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -297,8 +245,8 @@ const Product = () => {
                   style={{
                     marginTop: "10px",
                     padding: "8px 12px",
-                    backgroundColor: messageType === "success" ? "#d1fae5" : "#fee2e2", // hijau / merah muda
-                    color: messageType === "success" ? "#065f46" : "#b91c1c", // teks hijau gelap / merah gelap
+                    backgroundColor: messageType === "success" ? "#d1fae5" : "#fee2e2",
+                    color: messageType === "success" ? "#065f46" : "#b91c1c",
                     borderRadius: "6px",
                     textAlign: "center",
                     fontWeight: "500",
@@ -359,8 +307,6 @@ const Product = () => {
               </div>
             )}
 
-            {/* Tabel Produk */}
-            {/* Bungkus tabel dengan div responsif */}
             <div style={{ width: "100%", overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
                 <thead>
@@ -376,15 +322,14 @@ const Product = () => {
                     <tr key={index} style={{ textAlign: "center" }}>
                       <td style={{ padding: "10px", border: "1px solid #ddd" }}>{product.name}</td>
                       <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                        Rp {product.price.toLocaleString()}
+                        Rp {product.price != null ? Number(product.price).toLocaleString() : "0"}
                       </td>
                       <td style={{ padding: "10px", border: "1px solid #ddd" }}>{product.amount}</td>
                       <td style={{ padding: "10px", border: "1px solid #ddd", display: "flex", justifyContent: "center", gap: "5px" }}>
-                        {/* Tombol Edit */}
                         <button style={{ display: "flex", alignItems: "center", gap: "3px", padding: "5px 8px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
                           onClick={() => {
                               setEditProduct({
-                                id: product.id, // pastikan product ada id dari backend
+                                id: product.id,
                                 name: product.name,
                                 price: product.price,
                                 amount: product.amount,
@@ -400,7 +345,6 @@ const Product = () => {
                           </svg>
                         </button>
 
-                        {/* Tombol Delete */}
                         <button style={{ display: "flex", alignItems: "center", gap: "3px", padding: "5px 8px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
                           onClick={() => confirmDeleteProduct(product.id)}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

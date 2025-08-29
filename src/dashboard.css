@@ -1,4 +1,3 @@
-/* Reset global */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,133 +5,120 @@
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
 }
 
-/* Dashboard Layout */
 .dashboard-container {
-  position: fixed; /* menempel ke viewport */
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 220px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  background-color: #1e3a8a; /* biru gelap */
-  color: white;
-  border-right: 1px solid #1e40af; /* border biru lebih terang */
+  height: 100vh;
 }
 
-/* Sidebar header */
-.sidebar-header {
-  padding: 20px;
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e3a8a;
+  color: white;
+  padding: 10px 20px;
+  position: relative;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
   font-size: 20px;
   font-weight: bold;
-  display: flex;
-  justify-content: center; /* header text center */
-  align-items: center;
-  border-bottom: 1px solid #3b82f6; /* garis bawah biru cerah */
+  cursor: pointer;
 }
 
-/* Sidebar Menu */
-.sidebar-menu {
-  display: flex;
+/* Hamburger */
+.hamburger {
+  display: none;
   flex-direction: column;
-  padding: 0;
-  margin: 0;
+  cursor: pointer;
+  gap: 4px;
 }
 
-.sidebar-menu a {
-  padding: 15px 20px;
-  text-decoration: none;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.3s, color 0.3s;
+.hamburger .bar {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+}
+
+/* Menu links */
+.nav-links {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links a {
   color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
-.sidebar-menu a:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+.nav-links a:hover {
+  color: #a5c1f5;
 }
 
-/* Sidebar Footer */
-.sidebar-footer {
-  padding: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+/* Right side */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-icon svg {
+  border-radius: 50%;
+  background-color: #ffffff33; /* sedikit transparan */
+  padding: 4px;
+}
+
+.user-name {
+  font-weight: bold;
 }
 
 .logout-btn {
-  width: 100%;
-  padding: 10px;
+  padding: 6px 12px;
   border: none;
   border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-  background-color: #ef4444; /* merah untuk logout */
+  background-color: #ef4444;
   color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
 .logout-btn:hover {
   background-color: #dc2626;
 }
 
-/* Main Content */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header */
-.header {
-  background: #fff;
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Content area */
+/* Content */
 .content {
   flex: 1;
-  padding: 20px;
-  background-color: #f4f6f8;
-  overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #f4f6f8;
+  padding: 20px;
 }
 
-/* Card */
 .card {
   background: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 450px;
-  width: 100%;
-  max-width: 1500px;
   text-align: center;
+  max-width: 600px;
 }
 
 .card h2 {
@@ -145,25 +131,30 @@ html, body {
   color: white;
   text-align: center;
   padding: 12px;
-  flex-shrink: 0;
-}
-
-/* Sidebar states (tidak dipakai toggle) */
-.sidebar.closed,
-.sidebar.open {
-  transform: translateX(0);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
+  .hamburger {
+    display: flex;
   }
 
-  .main-content {
-    margin-left: 220px; /* beri space untuk sidebar tetap terlihat */
+  .nav-links {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    flex-direction: column;
+    background-color: #1e3a8a;
+    width: 100%;
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
   }
 }

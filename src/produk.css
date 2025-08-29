@@ -1,4 +1,3 @@
-/* Reset global */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,21 +5,14 @@
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
   height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
 }
 
-/* product Layout */
 .product-container {
-  position: fixed; /* menempel ke viewport */
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
   display: flex;
+  min-height: 100vh;
 }
 
 /* Sidebar */
@@ -29,49 +21,41 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #1e3a8a;
+  color: white;
+  border-right: 1px solid #1e40af;
   transition: all 0.3s ease;
   z-index: 1000;
-  background-color: #1e3a8a; /* biru gelap */
-  color: white;
-  border-right: 1px solid #1e40af; /* border biru lebih terang */
 }
 
-/* Sidebar header */
 .sidebar-header {
   padding: 20px;
   font-size: 20px;
   font-weight: bold;
-  display: flex;
-  justify-content: center; /* header text center */
-  align-items: center;
-  border-bottom: 1px solid #3b82f6; /* garis bawah biru cerah */
+  text-align: center;
+  border-bottom: 1px solid #3b82f6;
 }
 
-/* Sidebar Menu */
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  padding: 0;
-  margin: 0;
 }
 
 .sidebar-menu a {
   padding: 15px 20px;
   text-decoration: none;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  transition: background 0.3s, color 0.3s;
   color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  transition: background 0.3s;
 }
 
 .sidebar-menu a:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255,255,255,0.15);
 }
 
-/* Sidebar Footer */
 .sidebar-footer {
   padding: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255,255,255,0.2);
 }
 
 .logout-btn {
@@ -79,11 +63,10 @@ html, body {
   padding: 10px;
   border: none;
   border-radius: 4px;
+  background-color: #ef4444;
+  color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-  background-color: #ef4444; /* merah untuk logout */
-  color: white;
 }
 
 .logout-btn:hover {
@@ -95,43 +78,35 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #f4f6f8;
+  min-height: 100vh;
 }
 
-/* Header */
 .header {
   background: #fff;
   padding: 15px 20px;
   border-bottom: 1px solid #ddd;
-  flex-shrink: 0;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
 }
 
-/* Content area */
 .content {
   flex: 1;
   padding: 20px;
-  background-color: #f4f6f8;
   overflow-y: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 /* Card */
 .card {
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 450px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   width: 100%;
-  max-width: 1500px;
+  max-width: 1200px;
   text-align: center;
 }
 
@@ -139,22 +114,29 @@ html, body {
   margin-bottom: 10px;
 }
 
-/* Footer */
-.footer {
-  background: #277acc;
-  color: white;
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
   text-align: center;
-  padding: 12px;
-  flex-shrink: 0;
 }
 
-/* Sidebar states (tidak dipakai toggle) */
-.sidebar.closed,
-.sidebar.open {
-  transform: translateX(0);
+th {
+  background-color: #1e3a8a;
+  color: white;
 }
 
-/* overlay gelap */
+button {
+  cursor: pointer;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -165,23 +147,26 @@ html, body {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease-in;
 }
 
-/* container modal */
 .modal {
   background: #fff;
+  padding: 25px 20px;
   border-radius: 10px;
-  padding: 25px;
   width: 400px;
   max-width: 90%;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
 }
 
-/* form group */
+.modal h2 {
+  margin-bottom: 15px;
+  color: #ef4444;
+}
+
 .modal-group {
   margin-bottom: 15px;
+  text-align: left;
 }
 
 .modal-group label {
@@ -195,10 +180,8 @@ html, body {
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 14px;
 }
 
-/* tombol */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -211,9 +194,7 @@ html, body {
   color: #fff;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
   font-weight: 500;
-  transition: background 0.2s;
 }
 
 .btn-save:hover {
@@ -225,63 +206,11 @@ html, body {
   background-color: #ccc;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
   font-weight: 500;
 }
 
 .btn-cancel:hover {
   background-color: #b3b3b3;
-}
-
-/* animasi */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: #fff;
-  padding: 25px 20px;
-  border-radius: 10px;
-  width: 350px;
-  max-width: 90%;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-.modal h2 {
-  margin-bottom: 15px;
-  color: #ef4444;
-}
-
-.modal p {
-  margin-bottom: 20px;
-  font-size: 15px;
-  color: #333;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
 }
 
 .btn-delete {
@@ -290,7 +219,6 @@ html, body {
   color: white;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   font-weight: bold;
 }
 
@@ -298,29 +226,35 @@ html, body {
   background-color: #dc2626;
 }
 
-.btn-cancel {
-  padding: 8px 20px;
-  background-color: #6b7280;
+/* Footer */
+.footer {
+  background: #277acc;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-cancel:hover {
-  background-color: #4b5563;
+  text-align: center;
+  padding: 12px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
+    transform: translateX(-220px);
     top: 0;
     left: 0;
     height: 100%;
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
   }
 
   .main-content {
-    margin-left: 220px; /* beri space untuk sidebar tetap terlihat */
+    margin-left: 0;
+  }
+
+  table {
+    min-width: 0;
+    font-size: 14px;
   }
 }

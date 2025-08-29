@@ -13,7 +13,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // "success" | "error"
+  const [messageType, setMessageType] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -43,12 +43,12 @@ export default function Register() {
         setTimeout(() => {
           setMessage("");
           navigate("/login");
-        }, 2000); // pesan hilang setelah 2 detik
+        }, 2000);
       } else {
         setMessage(data.message || "Registrasi gagal!");
         setMessageType("error");
 
-        setTimeout(() => setMessage(""), 3000); // pesan hilang setelah 3 detik
+        setTimeout(() => setMessage(""), 3000);
       }
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
@@ -67,7 +67,6 @@ export default function Register() {
         <p className="register-subtitle">Silakan isi data untuk mendaftar</p>
 
         <form onSubmit={handleRegister}>
-          {/* Pesan notifikasi */}
           {message && (
             <div className={`message ${messageType}`}>
               {message}
@@ -121,7 +120,6 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Pilih Role */}
           <div className="form-group">
             <label>Pilih Role</label>
             <div className="role-options">

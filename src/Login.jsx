@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage(null); // reset pesan dulu
+    setMessage(null);
 
     try {
       const res = await axios.post("http://localhost:8000/api/login", {
@@ -23,15 +23,12 @@ export default function Login() {
 
       console.log("Response dari API:", res.data);
 
-      // cek apakah API kirim "token" atau "access_token"
       const token = res.data.token || res.data.access_token;
 
       if (token) {
-        localStorage.setItem("token", token); // simpan token
+        localStorage.setItem("token", token);
         setMessage("Login berhasil, mengarahkan ke dashboard...");
         setMessageType("success");
-
-        // kasih delay dikit biar user lihat pesannya
         setTimeout(() => {
           navigate("/dashboard");
         }, 1000);
@@ -52,7 +49,6 @@ export default function Login() {
         <h2 className="login-title">Welcome Back 👋</h2>
         <p className="login-subtitle">Silakan login untuk melanjutkan</p>
 
-        {/* Flash Message */}
         {message && (
           <div className={`alert ${messageType}`}>
             {message}

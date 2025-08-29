@@ -1,35 +1,80 @@
-// ChangePassword.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./ChangePassword.css";
 
 const ChangePassword = () => {
+  const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success");
   const navigate = useNavigate();
+
   useEffect(() => {
-    // cek token
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // redirect kalau tidak ada token
+      navigate("/login");
+    } else {
+      axios
+        .get("http://127.0.0.1:8000/api/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setEmail(res.data.email);
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+          navigate("/login");
+        });
     }
   }, [navigate]);
 
-  const email = "manager@example.com"; // contoh email user
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Email: ${email}\nPassword Lama: ${oldPassword}\nPassword Baru: ${newPassword}`);
-    setOldPassword("");
-    setNewPassword("");
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/changepassword",
+        {
+          old_password: oldPassword,
+          new_password: newPassword,
+          new_password_confirmation: newPassword,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setMessage(res.data.message + " Silakan login ulang.");
+      setMessageType("success");
+
+      setTimeout(() => {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }, 1500);
+
+      setOldPassword("");
+      setNewPassword("");
+    } catch (err) {
+      console.error(err);
+      setMessage(err.response?.data?.message || "Gagal mengubah password!");
+      setMessageType("error");
+    }
   };
 
   return (
     <div className="change-container">
       <div className="change-card">
         <h2>Ubah Password</h2>
+
+        {message && (
+          <div className={`alert-message ${messageType}`}>
+            {message}
+          </div>
+        )}
+        
         <form className="change-form" onSubmit={handleSubmit}>
           <label>
             Email:
