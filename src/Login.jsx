@@ -16,7 +16,7 @@ export default function Login() {
     setMessage(null);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/login", {
+      const res = await axios.post("http://manpro-api/api/login", {
         email,
         password,
       });
