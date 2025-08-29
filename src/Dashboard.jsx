@@ -22,7 +22,7 @@ const Dashboard = () => {
       navigate("/login");
     } else {
       axios
-        .get("http://127.0.0.1:8000/api/profile", {
+        .get("http://manpro-api/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setUser(res.data))
@@ -32,7 +32,7 @@ const Dashboard = () => {
         });
 
       axios
-        .get("http://127.0.0.1:8000/api/products/count", {
+        .get("http://manpro-api/api/products/count", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setTotalProduk(res.data.total))

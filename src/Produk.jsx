@@ -22,7 +22,7 @@ const Product = () => {
   const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/products",
+        "http://manpro-api/api/products",
         {
           name: newProduct.name,
           price: Number(newProduct.price),
@@ -50,7 +50,7 @@ const Product = () => {
   const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `http://127.0.0.1:8000/api/products/${editProduct.id}`,
+        `http://manpro-api/api/products/${editProduct.id}`,
         {
           name: editProduct.name,
           price: Number(editProduct.price),
@@ -81,7 +81,7 @@ const Product = () => {
   const handleDeleteProduct = async (id) => {
   const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/products/${id}`, {
+      await axios.delete(`http://manpro-api/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -118,7 +118,7 @@ const Product = () => {
       } else {
         // fetch data user pakai token
         axios
-          .get("http://127.0.0.1:8000/api/profile", {
+          .get("http://manpro-api/api/profile", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -139,7 +139,7 @@ const Product = () => {
         return;
       }
 
-      axios.get("http://127.0.0.1:8000/api/products", {
+      axios.get("http://manpro-api/api/products", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
