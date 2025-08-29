@@ -1,5 +1,6 @@
 // ChangePassword.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ChangePassword.css";
 
 const ChangePassword = () => {
@@ -7,6 +8,14 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    // cek token
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login"); // redirect kalau tidak ada token
+    }
+  }, [navigate]);
 
   const email = "manager@example.com"; // contoh email user
 

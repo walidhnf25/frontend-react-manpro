@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
 
@@ -7,6 +7,13 @@ const Profile = () => {
   const [email, setEmail] = useState("manager@example.com");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  useEffect(() => {
+    // cek token
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login"); // redirect kalau tidak ada token
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -1,15 +1,49 @@
-import { useState } from 'react';
+import { useState } from "react";
 import "./Login.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState(null); 
+  const [messageType, setMessageType] = useState("error"); 
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    alert("Form login dikirim (belum terhubung ke API)");
+    setMessage(null); // reset pesan dulu
+
+    try {
+      const res = await axios.post("http://localhost:8000/api/login", {
+        email,
+        password,
+      });
+
+      console.log("Response dari API:", res.data);
+
+      // cek apakah API kirim "token" atau "access_token"
+      const token = res.data.token || res.data.access_token;
+
+      if (token) {
+        localStorage.setItem("token", token); // simpan token
+        setMessage("Login berhasil, mengarahkan ke dashboard...");
+        setMessageType("success");
+
+        // kasih delay dikit biar user lihat pesannya
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
+      } else {
+        setMessage("Login gagal: Token tidak ditemukan di response API");
+        setMessageType("error");
+      }
+    } catch (err) {
+      console.error("Error login:", err);
+      setMessage("Email atau password salah");
+      setMessageType("error");
+    }
   };
 
   return (
@@ -17,6 +51,13 @@ export default function Login() {
       <form onSubmit={handleLogin} className="login-card">
         <h2 className="login-title">Welcome Back 👋</h2>
         <p className="login-subtitle">Silakan login untuk melanjutkan</p>
+
+        {/* Flash Message */}
+        {message && (
+          <div className={`alert ${messageType}`}>
+            {message}
+          </div>
+        )}
 
         <div className="form-group">
           <label>Email</label>
@@ -30,21 +71,25 @@ export default function Login() {
         </div>
 
         <div className="form-group">
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
+          <div className="password-wrapper">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Masukkan password"
             required
           />
+          <span
+            className="toggle-password"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "🙉" : "🙈"}
+          </span>
+          </div>
         </div>
 
-        <button
-          type="button"
-          className="login-button"
-          onClick={() => (window.location.href = "/Dashboard")}
-        >
+        <button type="submit" className="login-button">
           Login
         </button>
 

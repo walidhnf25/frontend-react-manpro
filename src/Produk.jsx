@@ -1,21 +1,166 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
+import axios from "axios";
+import "./Produk.css";
 
-const Dashboard = () => {
+const Product = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    price: "",
+    amount: "",
+  });
+  const [editProduct, setEditProduct] = useState(null); // menyimpan product yang sedang diedit
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteProductId, setDeleteProductId] = useState(null);
+  const handleAddProduct = async () => {
+  const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        "http://127.0.0.1:8000/api/products",
+        {
+          name: newProduct.name,
+          price: Number(newProduct.price),
+          amount: Number(newProduct.amount),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-  // contoh data produk
-  const products = [
-    { name: "Produk A", price: 10000, quantity: 50 },
-    { name: "Produk B", price: 25000, quantity: 30 },
-    { name: "Produk C", price: 15000, quantity: 70 },
-    { name: "Produk D", price: 5000, quantity: 120 },
-  ];
+      setMessage("Produk berhasil ditambahkan!");
+      setMessageType("success");
+      setShowModal(false);
+      setNewProduct({ name: "", price: "", amount: "" });
+
+      // Pesan hilang otomatis setelah 3 detik
+      setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage("Gagal menambahkan produk!");
+      setMessageType("error");
+
+      // Pesan hilang otomatis setelah 3 detik
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+  const handleUpdateProduct = async () => {
+  const token = localStorage.getItem("token");
+    try {
+      await axios.put(
+        `http://127.0.0.1:8000/api/products/${editProduct.id}`,
+        {
+          name: editProduct.name,
+          price: Number(editProduct.price),
+          amount: Number(editProduct.amount),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Update state products agar tabel langsung berubah
+      setProducts(prevProducts =>
+        prevProducts.map(p =>
+          p.id === editProduct.id ? { ...p, ...editProduct } : p
+        )
+      );
+
+      setMessage("Produk berhasil diperbarui!");
+      setMessageType("success");
+      setShowEditModal(false);
+      setEditProduct(null);
+
+      setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage("Gagal memperbarui produk!");
+      setMessageType("error");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+  const handleDeleteProduct = async (id) => {
+  const token = localStorage.getItem("token");
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/products/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setProducts(prev => prev.filter(p => p.id !== id)); // update state
+      setMessage("Produk berhasil dihapus!");
+      setMessageType("success");
+      setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage("Gagal menghapus produk!");
+      setMessageType("error");
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+  // Fungsi untuk membuka modal konfirmasi
+  const confirmDeleteProduct = (id) => {
+    setDeleteProductId(id);
+    setShowDeleteModal(true);
+  };
+
+  // Fungsi untuk konfirmasi hapus
+  const handleConfirmDelete = () => {
+    if (deleteProductId) {
+      handleDeleteProduct(deleteProductId);
+      setShowDeleteModal(false);
+      setDeleteProductId(null);
+    }
+  };
+  const navigate = useNavigate();
+  useEffect(() => {
+      // cek token
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login"); // redirect kalau tidak ada token
+      } else {
+        // fetch data user pakai token
+        axios
+          .get("http://127.0.0.1:8000/api/profile", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            setUser(res.data); // asumsi API balikin { id, name, email, ... }
+          })
+          .catch(() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          });
+      }
+    }, [navigate]);
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      axios.get("http://127.0.0.1:8000/api/products", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        setProducts(res.data); // set data produk ke state
+      })
+      .catch(err => {
+        console.error(err);
+        setMessage("Gagal mengambil data produk!");
+        setMessageType("error");
+        setTimeout(() => setMessage(""), 3000);
+      });
+    }, [navigate]);
+
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("success"); // 'success' atau 'error'
+
+  const [products, setProducts] = useState([]); // sebelumnya hardcode
 
   return (
-    <div className="dashboard-container">
+    <div className="product-container">
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">MANPRO</div>
@@ -105,7 +250,9 @@ const Dashboard = () => {
               <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>
               <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855"/>
             </svg>
-            <span style={{ fontWeight: "bold" }}>Manager</span>
+            <span style={{ fontWeight: "bold" }}>
+              {user ? user.name : "Loading..."}
+            </span>
           </div>
         </header>
 
@@ -125,7 +272,7 @@ const Dashboard = () => {
                   borderRadius: "4px",
                   cursor: "pointer",
                 }}
-                onClick={() => alert("Fungsi tambah produk akan ditambahkan")}
+                onClick={() => setShowModal(true)}
               >
                 {/* Icon Plus */}
                 <svg
@@ -145,7 +292,72 @@ const Dashboard = () => {
                 </svg>
                 Tambah Produk
               </button>
+              {message && (
+                <div
+                  style={{
+                    marginTop: "10px",
+                    padding: "8px 12px",
+                    backgroundColor: messageType === "success" ? "#d1fae5" : "#fee2e2", // hijau / merah muda
+                    color: messageType === "success" ? "#065f46" : "#b91c1c", // teks hijau gelap / merah gelap
+                    borderRadius: "6px",
+                    textAlign: "center",
+                    fontWeight: "500",
+                  }}
+                >
+                  {message}
+                </div>
+              )}
             </div>
+
+            {showModal && (
+              <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                <div className="modal" onClick={e => e.stopPropagation()}>
+                  <h2>Tambah Produk</h2>
+
+                  <div className="modal-group">
+                    <label>Nama Produk</label>
+                    <input
+                      type="text"
+                      value={newProduct.name}
+                      onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-group">
+                    <label>Harga</label>
+                    <input
+                      type="number"
+                      value={newProduct.price}
+                      onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-group">
+                    <label>Jumlah</label>
+                    <input
+                      type="number"
+                      value={newProduct.amount}
+                      onChange={e => setNewProduct({ ...newProduct, amount: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-actions">
+                    <button
+                      className="btn-save"
+                      onClick={handleAddProduct}
+                    >
+                      Simpan
+                    </button>
+                    <button
+                      className="btn-cancel"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Batal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Tabel Produk */}
             {/* Bungkus tabel dengan div responsif */}
@@ -166,11 +378,20 @@ const Dashboard = () => {
                       <td style={{ padding: "10px", border: "1px solid #ddd" }}>
                         Rp {product.price.toLocaleString()}
                       </td>
-                      <td style={{ padding: "10px", border: "1px solid #ddd" }}>{product.quantity}</td>
+                      <td style={{ padding: "10px", border: "1px solid #ddd" }}>{product.amount}</td>
                       <td style={{ padding: "10px", border: "1px solid #ddd", display: "flex", justifyContent: "center", gap: "5px" }}>
                         {/* Tombol Edit */}
                         <button style={{ display: "flex", alignItems: "center", gap: "3px", padding: "5px 8px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
-                          onClick={() => alert(`Edit ${product.name}`)}>
+                          onClick={() => {
+                              setEditProduct({
+                                id: product.id, // pastikan product ada id dari backend
+                                name: product.name,
+                                price: product.price,
+                                amount: product.amount,
+                              });
+                              setShowEditModal(true);
+                            }}
+                          >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
@@ -181,7 +402,7 @@ const Dashboard = () => {
 
                         {/* Tombol Delete */}
                         <button style={{ display: "flex", alignItems: "center", gap: "3px", padding: "5px 8px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
-                          onClick={() => alert(`Delete ${product.name}`)}>
+                          onClick={() => confirmDeleteProduct(product.id)}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M20 6a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-11l-5 -5a1.5 1.5 0 0 1 0 -2l5 -5z" />
@@ -194,6 +415,73 @@ const Dashboard = () => {
                 </tbody>
               </table>
             </div>
+
+            {showEditModal && editProduct && (
+              <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+                <div className="modal" onClick={e => e.stopPropagation()}>
+                  <h2>Edit Produk</h2>
+
+                  <div className="modal-group">
+                    <label>Nama Produk</label>
+                    <input
+                      type="text"
+                      value={editProduct.name}
+                      onChange={e => setEditProduct({ ...editProduct, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-group">
+                    <label>Harga</label>
+                    <input
+                      type="number"
+                      value={editProduct.price}
+                      onChange={e => setEditProduct({ ...editProduct, price: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-group">
+                    <label>Jumlah</label>
+                    <input
+                      type="number"
+                      value={editProduct.amount}
+                      onChange={e => setEditProduct({ ...editProduct, amount: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="modal-actions">
+                    <button className="btn-save" onClick={handleUpdateProduct}>
+                      Simpan
+                    </button>
+                    <button className="btn-cancel" onClick={() => setShowEditModal(false)}>
+                      Batal
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {showDeleteModal && (
+            <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <h2>Konfirmasi Hapus</h2>
+                <p>Apakah Anda yakin ingin menghapus produk ini?</p>
+                <div className="modal-actions">
+                  <button
+                    className="btn-delete"
+                    onClick={handleConfirmDelete}
+                  >
+                    Hapus
+                  </button>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Batal
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         </main>
 
@@ -205,4 +493,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Product;

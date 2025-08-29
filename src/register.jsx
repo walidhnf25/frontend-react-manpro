@@ -1,32 +1,63 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
 export default function Register() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    role: "karyawan", // default
+    role: "karyawan",
     password: "",
-    confirmPassword: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // "success" | "error"
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
-      alert("Password dan konfirmasi password tidak sama!");
-      return;
-    }
+    setLoading(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    console.log("Nama:", form.name);
-    console.log("Email:", form.email);
-    console.log("Role:", form.role);
-    console.log("Password:", form.password);
-    alert("Form daftar dikirim (belum terhubung ke API)");
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Registrasi berhasil! Mengarahkan ke login...");
+        setMessageType("success");
+
+        setTimeout(() => {
+          setMessage("");
+          navigate("/login");
+        }, 2000); // pesan hilang setelah 2 detik
+      } else {
+        setMessage(data.message || "Registrasi gagal!");
+        setMessageType("error");
+
+        setTimeout(() => setMessage(""), 3000); // pesan hilang setelah 3 detik
+      }
+    } catch (error) {
+      console.error("Terjadi kesalahan:", error);
+      setMessage("Gagal terhubung ke server");
+      setMessageType("error");
+      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +67,13 @@ export default function Register() {
         <p className="register-subtitle">Silakan isi data untuk mendaftar</p>
 
         <form onSubmit={handleRegister}>
+          {/* Pesan notifikasi */}
+          {message && (
+            <div className={`message ${messageType}`}>
+              {message}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="name">Nama Lengkap</label>
             <input
@@ -64,45 +102,53 @@ export default function Register() {
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Masukkan password"
-              required
-            />
+            <div className="password-wrapper">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Masukkan password"
+                required
+              />
+              <span
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙉" : "🙈"}
+              </span>
+            </div>
           </div>
 
-        {/* Pilih Role */}
-        <div className="form-group">
+          {/* Pilih Role */}
+          <div className="form-group">
             <label>Pilih Role</label>
             <div className="role-options">
-                <input
+              <input
                 type="radio"
                 id="manager"
                 name="role"
                 value="manager"
                 checked={form.role === "manager"}
                 onChange={handleChange}
-                />
-                <label htmlFor="manager">Manager</label>
+              />
+              <label htmlFor="manager">Manager</label>
 
-                <input
+              <input
                 type="radio"
                 id="karyawan"
                 name="role"
                 value="karyawan"
                 checked={form.role === "karyawan"}
                 onChange={handleChange}
-                />
-                <label htmlFor="karyawan">Karyawan</label>
+              />
+              <label htmlFor="karyawan">Karyawan</label>
             </div>
-        </div>
+          </div>
 
-          <button type="submit" className="register-button">
-            Daftar
+          <button type="submit" className="register-button" disabled={loading}>
+            {loading ? "Mendaftar..." : "Daftar"}
           </button>
         </form>
 
