@@ -19,7 +19,7 @@ const ChangePassword = () => {
       navigate("/login");
     } else {
       axios
-        .get("http://manpro-api/api/profile", {
+        .get("http://127.0.0.1:8000/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -38,7 +38,7 @@ const ChangePassword = () => {
 
     try {
       const res = await axios.post(
-        "http://manpro-api/api/changepassword",
+        "http://127.0.0.1:8000/api/changepassword",
         {
           old_password: oldPassword,
           new_password: newPassword,

@@ -15,7 +15,7 @@ const Profile = () => {
       navigate("/login");
     } else {
       axios
-        .get("http://manpro-api/api/profile", {
+        .get("http://127.0.0.1:8000/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => setUser(res.data))
@@ -36,7 +36,7 @@ const Profile = () => {
 
     try {
       const res = await axios.put(
-        "http://manpro-api/api/profile",
+        "http://127.0.0.1:8000/api/profile",
         { name: user.name, email: user.email, role: user.role },
         { headers: { Authorization: `Bearer ${token}` } }
       );

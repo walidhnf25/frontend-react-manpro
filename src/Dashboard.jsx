@@ -20,24 +20,26 @@ const Dashboard = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
-    } else {
-      axios
-        .get("http://manpro-api/api/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem("token");
-          navigate("/login");
-        });
-
-      axios
-        .get("http://manpro-api/api/products/count", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setTotalProduk(res.data.total))
-        .catch((err) => console.error(err));
+      return;
     }
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    // ambil profile
+    axios.get("http://127.0.0.1:8000/api/profile")
+      .then(res => {
+        setUser(res.data.user || res.data); // sesuaikan dengan response API
+      })
+      .catch(err => {
+        console.error("Profile API error:", err.response);
+        localStorage.removeItem("token");
+        navigate("/login");
+      });
+
+    // ambil jumlah produk
+    axios.get("http://127.0.0.1:8000/api/products/count")
+      .then(res => setTotalProduk(res.data.total))
+      .catch(err => console.error(err));
   }, [navigate]);
 
   return (
@@ -45,7 +47,7 @@ const Dashboard = () => {
       {/* Navbar */}
       <header className="navbar">
         <div className="navbar-left">
-          <div className="logo" onClick={() => navigate("/Dashboard")}>
+          <div className="logo" onClick={() => navigate("/dashboard")}>
             MANPRO
           </div>
 
@@ -56,19 +58,19 @@ const Dashboard = () => {
           </div>
 
           <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
-            <a href="/Dashboard">Dashboard</a>
-            {user?.role === "manager" && <a href="/Produk">Produk</a>}
+            <a href="/dashboard">Dashboard</a>
+            {user?.role === "manager" && <a href="/produk">Produk</a>}
           </nav>
         </div>
 
         <div className="navbar-right">
           <div
             className="profile-icon"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/Profile")}
             style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
               width="32"
               height="32"
               viewBox="0 0 24 24"

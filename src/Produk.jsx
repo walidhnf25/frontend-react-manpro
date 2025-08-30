@@ -22,7 +22,7 @@ const Product = () => {
   const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        "http://manpro-api/api/products",
+        "http://127.0.0.1:8000/api/products",
         {
           name: newProduct.name,
           price: Number(newProduct.price),
@@ -50,7 +50,7 @@ const Product = () => {
   const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `http://manpro-api/api/products/${editProduct.id}`,
+        `http://127.0.0.1:8000/api/products/${editProduct.id}`,
         {
           name: editProduct.name,
           price: Number(editProduct.price),
@@ -81,7 +81,7 @@ const Product = () => {
   const handleDeleteProduct = async (id) => {
   const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://manpro-api/api/products/${id}`, {
+      await axios.delete(`http://127.0.0.1:8000/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -118,7 +118,7 @@ const Product = () => {
       } else {
         // fetch data user pakai token
         axios
-          .get("http://manpro-api/api/profile", {
+          .get("http://127.0.0.1:8000/api/profile", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -139,7 +139,7 @@ const Product = () => {
         return;
       }
 
-      axios.get("http://manpro-api/api/products", {
+      axios.get("http://127.0.0.1:8000/api/products", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -163,7 +163,7 @@ const Product = () => {
       <div className="main-content">
         <header className="navbar">
         <div className="navbar-left">
-          <div className="logo" onClick={() => navigate("/Dashboard")}>
+          <div className="logo" onClick={() => navigate("/dashboard")}>
             MANPRO
           </div>
 
@@ -174,8 +174,8 @@ const Product = () => {
           </div>
 
           <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
-            <a href="/Dashboard">Dashboard</a>
-            {user?.role === "manager" && <a href="/Produk">Produk</a>}
+            <a href="/dashboard">Dashboard</a>
+            {user?.role === "manager" && <a href="/produk">Produk</a>}
           </nav>
         </div>
 
@@ -186,7 +186,7 @@ const Product = () => {
             style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}
           >
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+              xmlns="https://www.w3.org/2000/svg"
               width="32"
               height="32"
               viewBox="0 0 24 24"
@@ -224,7 +224,7 @@ const Product = () => {
                 onClick={() => setShowModal(true)}
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="https://www.w3.org/2000/svg"
                   width="16"
                   height="16"
                   viewBox="0 0 24 24"
@@ -337,7 +337,7 @@ const Product = () => {
                               setShowEditModal(true);
                             }}
                           >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
                             <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
@@ -347,7 +347,7 @@ const Product = () => {
 
                         <button style={{ display: "flex", alignItems: "center", gap: "3px", padding: "5px 8px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}
                           onClick={() => confirmDeleteProduct(product.id)}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <svg xmlns="https://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M20 6a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-11l-5 -5a1.5 1.5 0 0 1 0 -2l5 -5z" />
                             <path d="M12 10l4 4m0 -4l-4 4" />

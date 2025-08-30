@@ -16,7 +16,7 @@ export default function Login() {
     setMessage(null);
 
     try {
-      const res = await axios.post("http://manpro-api/api/login", {
+      const res = await axios.post("http://127.0.0.1:8000/api/login", {
         email,
         password,
       });
@@ -90,7 +90,7 @@ export default function Login() {
         </button>
 
         <p className="login-footer">
-          Belum punya akun? <a href="/Register">Daftar</a>
+          Belum punya akun? <a href="/register">Daftar</a>
         </p>
       </form>
     </div>
