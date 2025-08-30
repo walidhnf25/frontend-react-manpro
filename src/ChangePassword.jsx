@@ -17,19 +17,23 @@ const ChangePassword = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
-    } else {
-      axios
-        .get("http://127.0.0.1:8000/api/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => {
-          setEmail(res.data.email);
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-          navigate("/login");
-        });
+      return;
     }
+
+    const apiUrl = "https://manpro-api.teluapp.org/api/profile"; // gunakan API produksi
+
+    axios
+      .get(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data && res.data.email) setEmail(res.data.email);
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+        localStorage.removeItem("token");
+        navigate("/login");
+      });
   }, [navigate]);
 
   const handleSubmit = async (e) => {
@@ -38,7 +42,7 @@ const ChangePassword = () => {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/changepassword",
+        "https://manpro-api.teluapp.org/api/changepassword",
         {
           old_password: oldPassword,
           new_password: newPassword,

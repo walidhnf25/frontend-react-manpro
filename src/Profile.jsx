@@ -11,19 +11,27 @@ const Profile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
       navigate("/login");
-    } else {
-      axios
-        .get("http://127.0.0.1:8000/api/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem("token");
-          navigate("/login");
-        });
+      return;
     }
+
+    // Gunakan URL yang sama dengan API publik / produksi
+    const apiUrl = "https://manpro-api.teluapp.org/api/profile";
+
+    axios
+      .get(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data) setUser(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+        localStorage.removeItem("token");
+        navigate("/login");
+      });
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -36,7 +44,7 @@ const Profile = () => {
 
     try {
       const res = await axios.put(
-        "http://127.0.0.1:8000/api/profile",
+        "https://manpro-api.teluapp.org/api/profile",
         { name: user.name, email: user.email, role: user.role },
         { headers: { Authorization: `Bearer ${token}` } }
       );

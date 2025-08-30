@@ -26,7 +26,7 @@ const Dashboard = () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     // ambil profile
-    axios.get("http://127.0.0.1:8000/api/profile")
+    axios.get("https://manpro-api.teluapp.org/api/profile")
       .then(res => {
         setUser(res.data.user || res.data); // sesuaikan dengan response API
       })
@@ -37,7 +37,7 @@ const Dashboard = () => {
       });
 
     // ambil jumlah produk
-    axios.get("http://127.0.0.1:8000/api/products/count")
+    axios.get("https://manpro-api.teluapp.org/api/products/count")
       .then(res => setTotalProduk(res.data.total))
       .catch(err => console.error(err));
   }, [navigate]);
